@@ -1,7 +1,23 @@
-fastapi==0.111.0
-uvicorn[standard]==0.29.0
-psutil==5.9.8
-sqlalchemy==2.0.30
-websockets==12.0
-# Uncomment for PostgreSQL:
-# psycopg2-binary==2.9.9
+# Updated requirements for advanced analytics, data processing, and improved metrics collection
+
+# Add enhanced dependencies below
+
+numpy
+pandas
+scikit-learn
+statsmodels
+matplotlib
+seaborn
+networkx
+pytest
+# Additional libraries for advanced analytics
+tensorflow
+pytorch
+xgboost
+lightgbm
+# Libraries for performance metrics
+mlflow
+pycaret
+# Data processing tools
+dask
+pyarrow
