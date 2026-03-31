@@ -1,807 +1,1315 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Device Health Monitor</title>
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@300;400;500;600&display=swap');
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+    <title>Device Health Monitor</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@300;400;500;600&display=swap');
 
-:root {
-  --bg:#0b0e17; --surface:#111827; --card:#161d2e; --border:#1e2d45;
-  --border2:#243554; --accent:#3b82f6; --teal:#14b8a6; --amber:#f59e0b;
-  --red:#ef4444; --green:#22c55e; --purple:#a78bfa;
-  --txt:#e2e8f0; --txt2:#8899bb; --txt3:#3a4f70;
-  --mono:'Space Mono',monospace; --sans:'Inter',sans-serif;
-}
-*{box-sizing:border-box;margin:0;padding:0;}
-html{scroll-behavior:smooth;}
-body{background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:14px;min-height:100vh;}
+        :root {
+            --bg: #0b0e17;
+            --surface: #111827;
+            --card: #161d2e;
+            --border: #1e2d45;
+            --border2: #243554;
+            --accent: #3b82f6;
+            --teal: #14b8a6;
+            --amber: #f59e0b;
+            --red: #ef4444;
+            --green: #22c55e;
+            --purple: #a78bfa;
+            --txt: #e2e8f0;
+            --txt2: #8899bb;
+            --txt3: #3a4f70;
+            --mono: 'Space Mono', monospace;
+            --sans: 'Inter', sans-serif;
+        }
 
-/* grid background */
-body::before{
-  content:''; position:fixed; inset:0; z-index:0;
-  background-image:linear-gradient(var(--border) 1px,transparent 1px),
-                   linear-gradient(90deg,var(--border) 1px,transparent 1px);
-  background-size:48px 48px; opacity:.18; pointer-events:none;
-}
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-/* ── layout ── */
-.app{position:relative;z-index:1;max-width:1500px;margin:0 auto;padding:20px;}
+        html {
+            scroll-behavior: smooth;
+        }
 
-header{
-  display:flex;align-items:center;justify-content:space-between;
-  padding-bottom:18px;border-bottom:1px solid var(--border);margin-bottom:24px;
-  flex-wrap:wrap;gap:12px;
-}
-.logo{display:flex;align-items:center;gap:10px;}
-.logo-icon{
-  width:34px;height:34px;background:var(--accent);border-radius:8px;
-  display:flex;align-items:center;justify-content:center;
-  font-family:var(--mono);font-size:10px;font-weight:700;color:#fff;flex-shrink:0;
-}
-.logo-name{font-size:14px;font-weight:600;}
-.logo-sub{font-size:10px;color:var(--txt2);font-family:var(--mono);}
+        body {
+            background: var(--bg);
+            color: var(--txt);
+            font-family: var(--sans);
+            font-size: 14px;
+            min-height: 100vh;
+        }
 
-.hdr-right{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background-image: linear-gradient(var(--border) 1px, transparent 1px),
+            linear-gradient(90deg, var(--border) 1px, transparent 1px);
+            background-size: 48px 48px;
+            opacity: 0.18;
+            pointer-events: none;
+        }
 
-.device-tabs{display:flex;gap:6px;}
-.dtab{
-  padding:6px 16px;border-radius:6px;border:1px solid var(--border2);
-  background:var(--card);color:var(--txt2);cursor:pointer;
-  font-size:12px;font-weight:500;transition:all .2s;
-}
-.dtab:hover,.dtab.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+        .app {
+            position: relative;
+            z-index: 1;
+            max-width: 1500px;
+            margin: 0 auto;
+            padding: 20px;
+        }
 
-.conn-badge{
-  display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:20px;
-  font-size:11px;font-family:var(--mono);border:1px solid;
-}
-.conn-badge.connected{background:rgba(34,197,94,.1);border-color:rgba(34,197,94,.35);color:var(--green);}
-.conn-badge.disconnected{background:rgba(239,68,68,.1);border-color:rgba(239,68,68,.35);color:var(--red);}
-.conn-dot{width:6px;height:6px;border-radius:50%;background:currentColor;animation:pulse 1.4s infinite;}
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(1.4)}}
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 18px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
 
-.grid3{display:grid;grid-template-columns:260px 1fr 290px;gap:18px;align-items:start;}
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
 
-/* ── cards ── */
-.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;}
-.card-title{font-size:10px;font-family:var(--mono);color:var(--txt2);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:14px;}
+        .logo-icon {
+            width: 34px;
+            height: 34px;
+            background: var(--accent);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--mono);
+            font-size: 10px;
+            font-weight: 700;
+            color: #fff;
+            flex-shrink: 0;
+        }
 
-/* ── gauge ── */
-.gauge-wrap{display:flex;flex-direction:column;align-items:center;padding:4px 0 0;}
-.gauge-svg{width:190px;height:105px;overflow:visible;}
-.score-big{font-size:44px;font-family:var(--mono);font-weight:700;text-align:center;line-height:1;margin-top:4px;}
-.score-lbl{font-size:10px;color:var(--txt2);font-family:var(--mono);text-align:center;margin-top:3px;}
+        .logo-name {
+            font-size: 14px;
+            font-weight: 600;
+        }
 
-.risk-pill{
-  display:inline-flex;align-items:center;gap:6px;padding:5px 16px;border-radius:20px;
-  font-size:11px;font-weight:600;font-family:var(--mono);margin-top:14px;letter-spacing:.5px;border:1px solid;
-}
-.r-low     {background:rgba(34,197,94,.1);  color:var(--green); border-color:rgba(34,197,94,.3);}
-.r-medium  {background:rgba(245,158,11,.1); color:var(--amber); border-color:rgba(245,158,11,.3);}
-.r-high    {background:rgba(239,68,68,.1);  color:var(--red);   border-color:rgba(239,68,68,.3);}
-.r-critical{background:rgba(239,68,68,.18); color:#ff3333;      border-color:rgba(255,51,51,.5);animation:blink 1s infinite;}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.55}}
+        .logo-sub {
+            font-size: 10px;
+            color: var(--txt2);
+            font-family: var(--mono);
+        }
 
-/* ── RUL ── */
-.rul-num{font-size:38px;font-family:var(--mono);font-weight:700;color:var(--teal);}
-.rul-unit{font-size:11px;color:var(--txt2);font-family:var(--mono);}
-.bar-bg{background:var(--border2);border-radius:4px;height:6px;overflow:hidden;margin-top:10px;}
-.bar-fill{height:100%;border-radius:4px;transition:width 1s ease;}
-.mini-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;}
-.mini-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px;}
-.mini-lbl{font-size:9px;color:var(--txt2);font-family:var(--mono);}
-.mini-val{font-size:18px;font-family:var(--mono);font-weight:700;margin-top:2px;}
+        .hdr-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
 
-/* ── attention ── */
-.attn-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:3px;margin-top:10px;}
-.attn-cell{aspect-ratio:1;border-radius:3px;transition:background .7s;}
-.attn-lbl{display:flex;justify-content:space-between;margin-top:5px;font-size:9px;color:var(--txt3);font-family:var(--mono);}
-.attn-legend{display:flex;align-items:center;gap:6px;margin-top:8px;font-size:9px;color:var(--txt3);}
-.attn-legend-bar{height:6px;flex:1;background:linear-gradient(to right,var(--surface),var(--accent));border-radius:3px;}
+        .device-tabs {
+            display: flex;
+            gap: 6px;
+        }
 
-/* ── metrics grid ── */
-.metrics-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-.m-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:13px;}
-.m-name{font-size:10px;color:var(--txt2);font-family:var(--mono);text-transform:uppercase;letter-spacing:.8px;}
-.m-val{font-size:22px;font-family:var(--mono);font-weight:700;margin:4px 0 2px;}
-.m-unit{font-size:10px;color:var(--txt3);}
-.m-bar-bg{background:var(--border2);border-radius:3px;height:4px;margin-top:7px;overflow:hidden;}
-.m-bar-fill{height:100%;border-radius:3px;transition:width .8s;}
-.m-trend{font-size:10px;font-family:var(--mono);margin-top:5px;}
-.t-up{color:var(--red);}
-.t-dn{color:var(--green);}
-.t-st{color:var(--txt2);}
+        .dtab {
+            padding: 6px 16px;
+            border-radius: 6px;
+            border: 1px solid var(--border2);
+            background: var(--card);
+            color: var(--txt2);
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
 
-/* ── chart ── */
-.chart-wrap{position:relative;width:100%;height:175px;}
+        .dtab:hover,
+        .dtab.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #fff;
+        }
 
-/* ── failure list ── */
-.failure-list{display:flex;flex-direction:column;gap:9px;}
-.f-item{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:10px 12px;background:var(--surface);border:1px solid var(--border);
-  border-radius:8px;border-left:3px solid transparent;
-}
-.f-name{font-size:12px;font-weight:500;}
-.f-sub{font-size:10px;color:var(--txt2);font-family:var(--mono);margin-top:2px;}
-.f-prob{font-family:var(--mono);font-size:14px;font-weight:700;}
+        .conn-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-family: var(--mono);
+            border: 1px solid;
+        }
 
-/* ── alerts ── */
-.alert-feed{display:flex;flex-direction:column;gap:7px;max-height:280px;overflow-y:auto;padding-right:4px;}
-.alert-feed::-webkit-scrollbar{width:3px;}
-.alert-feed::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
-.a-item{padding:9px 12px;border-radius:8px;border-left:3px solid;animation:fadeIn .35s ease;}
-@keyframes fadeIn{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:none}}
-.a-warn{background:rgba(245,158,11,.07);border-color:var(--amber);}
-.a-crit{background:rgba(239,68,68,.08);border-color:var(--red);}
-.a-info{background:rgba(59,130,246,.07);border-color:var(--accent);}
-.a-ok  {background:rgba(34,197,94,.07); border-color:var(--green);}
-.a-msg{font-size:12px;}
-.a-time{font-size:10px;color:var(--txt2);font-family:var(--mono);margin-top:3px;}
+        .conn-badge.connected {
+            background: rgba(34, 197, 94, 0.1);
+            border-color: rgba(34, 197, 94, 0.35);
+            color: var(--green);
+        }
 
-.sec-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:13px;}
-.clr-btn{font-size:10px;color:var(--txt2);font-family:var(--mono);background:none;border:none;cursor:pointer;padding:0;}
-.clr-btn:hover{color:var(--red);}
+        .conn-badge.disconnected {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: rgba(239, 68, 68, 0.35);
+            color: var(--red);
+        }
 
-/* ── model panel ── */
-.model-rows{display:flex;flex-direction:column;gap:0;}
-.model-row{
-  display:flex;justify-content:space-between;align-items:center;
-  padding:8px 0;border-bottom:1px solid var(--border);
-}
-.model-row:last-child{border-bottom:none;}
-.model-k{font-size:10px;color:var(--txt2);font-family:var(--mono);}
-.model-v{font-size:11px;font-family:var(--mono);}
+        .conn-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+            animation: pulse 1.4s infinite;
+        }
 
-/* ── risk breakdown ── */
-.rb-rows{display:flex;flex-direction:column;gap:8px;}
-.rb-row{display:flex;align-items:center;gap:10px;}
-.rb-lbl{font-size:10px;color:var(--txt2);font-family:var(--mono);width:85px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.rb-bar-bg{flex:1;background:var(--border2);border-radius:3px;height:5px;overflow:hidden;}
-.rb-bar-fill{height:100%;border-radius:3px;transition:width .9s;}
-.rb-score{font-size:10px;font-family:var(--mono);width:28px;text-align:right;}
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.4;
+                transform: scale(1.4);
+            }
+        }
 
-footer{
-  margin-top:28px;padding-top:18px;border-top:1px solid var(--border);
-  display:flex;justify-content:space-between;align-items:center;
-  font-size:11px;color:var(--txt3);font-family:var(--mono);flex-wrap:wrap;gap:10px;
-}
-.ft-stats{display:flex;gap:20px;flex-wrap:wrap;}
-.ft-stat span:last-child{color:var(--txt);}
+        .grid3 {
+            display: grid;
+            grid-template-columns: 260px 1fr 290px;
+            gap: 18px;
+            align-items: start;
+        }
 
-/* ── DB panel ── */
-.db-toggle{
-  display:flex;align-items:center;gap:8px;padding:6px 14px;
-  border-radius:6px;border:1px solid var(--border2);background:var(--card);
-  color:var(--txt2);cursor:pointer;font-size:12px;font-weight:500;transition:all .2s;
-}
-.db-toggle:hover{border-color:var(--teal);color:var(--teal);}
-.db-panel{
-  background:var(--card);border:1px solid var(--border);border-radius:12px;
-  padding:18px;margin-top:18px;display:none;
-}
-.db-panel.open{display:block;}
-.db-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px;}
-.db-stat{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px;}
-.db-stat-lbl{font-size:9px;color:var(--txt2);font-family:var(--mono);text-transform:uppercase;letter-spacing:1px;}
-.db-stat-val{font-size:22px;font-family:var(--mono);font-weight:700;margin-top:4px;color:var(--accent);}
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 18px;
+        }
 
-.api-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-.api-btn{
-  padding:10px 14px;background:var(--surface);border:1px solid var(--border);
-  border-radius:8px;cursor:pointer;text-align:left;transition:all .2s;
-}
-.api-btn:hover{border-color:var(--accent);background:rgba(59,130,246,.06);}
-.api-btn-method{font-size:9px;font-family:var(--mono);font-weight:700;margin-bottom:3px;}
-.get{color:var(--green);}
-.post{color:var(--amber);}
-.del{color:var(--red);}
-.patch{color:var(--purple);}
-.api-btn-path{font-size:11px;font-family:var(--mono);color:var(--txt);}
-.api-btn-desc{font-size:10px;color:var(--txt2);margin-top:2px;}
+        .card-title {
+            font-size: 10px;
+            font-family: var(--mono);
+            color: var(--txt2);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 14px;
+        }
 
-.api-result{
-  background:var(--surface);border:1px solid var(--border);border-radius:8px;
-  padding:14px;font-family:var(--mono);font-size:11px;color:var(--teal);
-  max-height:220px;overflow-y:auto;white-space:pre-wrap;word-break:break-all;
-  margin-top:14px;display:none;
-}
-.api-result.visible{display:block;}
+        .gauge-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 4px 0 0;
+        }
 
-@media(max-width:1100px){.grid3{grid-template-columns:1fr 1fr;}}
-@media(max-width:700px){.grid3{grid-template-columns:1fr;}.metrics-grid{grid-template-columns:1fr 1fr;}.db-grid{grid-template-columns:1fr 1fr;}.api-grid{grid-template-columns:1fr;}}
-</style>
+        .gauge-svg {
+            width: 190px;
+            height: 105px;
+            overflow: visible;
+        }
+
+        .score-big {
+            font-size: 44px;
+            font-family: var(--mono);
+            font-weight: 700;
+            text-align: center;
+            line-height: 1;
+            margin-top: 4px;
+        }
+
+        .score-lbl {
+            font-size: 10px;
+            color: var(--txt2);
+            font-family: var(--mono);
+            text-align: center;
+            margin-top: 3px;
+        }
+
+        .risk-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 16px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            font-family: var(--mono);
+            margin-top: 14px;
+            letter-spacing: 0.5px;
+            border: 1px solid;
+        }
+
+        .r-low {
+            background: rgba(34, 197, 94, 0.1);
+            color: var(--green);
+            border-color: rgba(34, 197, 94, 0.3);
+        }
+
+        .r-medium {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--amber);
+            border-color: rgba(245, 158, 11, 0.3);
+        }
+
+        .r-high {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--red);
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+
+        .r-critical {
+            background: rgba(239, 68, 68, 0.18);
+            color: #ff3333;
+            border-color: rgba(255, 51, 51, 0.5);
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.55;
+            }
+        }
+
+        .rul-num {
+            font-size: 38px;
+            font-family: var(--mono);
+            font-weight: 700;
+            color: var(--teal);
+        }
+
+        .rul-unit {
+            font-size: 11px;
+            color: var(--txt2);
+            font-family: var(--mono);
+        }
+
+        .bar-bg {
+            background: var(--border2);
+            border-radius: 4px;
+            height: 6px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 1s ease;
+        }
+
+        .mini-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .mini-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px;
+        }
+
+        .mini-lbl {
+            font-size: 9px;
+            color: var(--txt2);
+            font-family: var(--mono);
+        }
+
+        .mini-val {
+            font-size: 18px;
+            font-family: var(--mono);
+            font-weight: 700;
+            margin-top: 2px;
+        }
+
+        .attn-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 3px;
+            margin-top: 10px;
+        }
+
+        .attn-cell {
+            aspect-ratio: 1;
+            border-radius: 3px;
+            transition: background 0.7s;
+        }
+
+        .attn-lbl {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
+            font-size: 9px;
+            color: var(--txt3);
+            font-family: var(--mono);
+        }
+
+        .attn-legend {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 8px;
+            font-size: 9px;
+            color: var(--txt3);
+        }
+
+        .attn-legend-bar {
+            height: 6px;
+            flex: 1;
+            background: linear-gradient(to right, var(--surface), var(--accent));
+            border-radius: 3px;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .m-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 13px;
+        }
+
+        .m-name {
+            font-size: 10px;
+            color: var(--txt2);
+            font-family: var(--mono);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        .m-val {
+            font-size: 22px;
+            font-family: var(--mono);
+            font-weight: 700;
+            margin: 4px 0 2px;
+        }
+
+        .m-unit {
+            font-size: 10px;
+            color: var(--txt3);
+        }
+
+        .m-bar-bg {
+            background: var(--border2);
+            border-radius: 3px;
+            height: 4px;
+            margin-top: 7px;
+            overflow: hidden;
+        }
+
+        .m-bar-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.8s;
+        }
+
+        .m-trend {
+            font-size: 10px;
+            font-family: var(--mono);
+            margin-top: 5px;
+        }
+
+        .t-up {
+            color: var(--red);
+        }
+
+        .t-dn {
+            color: var(--green);
+        }
+
+        .t-st {
+            color: var(--txt2);
+        }
+
+        .chart-wrap {
+            position: relative;
+            width: 100%;
+            height: 175px;
+        }
+
+        .failure-list {
+            display: flex;
+            flex-direction: column;
+            gap: 9px;
+        }
+
+        .f-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 12px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            border-left: 3px solid transparent;
+        }
+
+        .f-name {
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .f-sub {
+            font-size: 10px;
+            color: var(--txt2);
+            font-family: var(--mono);
+            margin-top: 2px;
+        }
+
+        .f-prob {
+            font-family: var(--mono);
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .alert-feed {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+            max-height: 280px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        .alert-feed::-webkit-scrollbar {
+            width: 3px;
+        }
+
+        .alert-feed::-webkit-scrollbar-thumb {
+            background: var(--border2);
+            border-radius: 2px;
+        }
+
+        .a-item {
+            padding: 9px 12px;
+            border-radius: 8px;
+            border-left: 3px solid;
+            animation: fadeIn 0.35s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-5px);
+            }
+            to {
+                opacity: 1;
+                transform: none;
+            }
+        }
+
+        .a-warn {
+            background: rgba(245, 158, 11, 0.07);
+            border-color: var(--amber);
+        }
+
+        .a-crit {
+            background: rgba(239, 68, 68, 0.08);
+            border-color: var(--red);
+        }
+
+        .a-info {
+            background: rgba(59, 130, 246, 0.07);
+            border-color: var(--accent);
+        }
+
+        .a-ok {
+            background: rgba(34, 197, 94, 0.07);
+            border-color: var(--green);
+        }
+
+        .a-msg {
+            font-size: 12px;
+        }
+
+        .a-time {
+            font-size: 10px;
+            color: var(--txt2);
+            font-family: var(--mono);
+            margin-top: 3px;
+        }
+
+        .sec-hdr {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 13px;
+        }
+
+        .clr-btn {
+            font-size: 10px;
+            color: var(--txt2);
+            font-family: var(--mono);
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        .clr-btn:hover {
+            color: var(--red);
+        }
+
+        .model-rows {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .model-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .model-row:last-child {
+            border-bottom: none;
+        }
+
+        .model-k {
+            font-size: 10px;
+            color: var(--txt2);
+            font-family: var(--mono);
+        }
+
+        .model-v {
+            font-size: 11px;
+            font-family: var(--mono);
+        }
+
+        .rb-rows {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .rb-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .rb-lbl {
+            font-size: 10px;
+            color: var(--txt2);
+            font-family: var(--mono);
+            width: 85px;
+            flex-shrink: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .rb-bar-bg {
+            flex: 1;
+            background: var(--border2);
+            border-radius: 3px;
+            height: 5px;
+            overflow: hidden;
+        }
+
+        .rb-bar-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.9s;
+        }
+
+        .rb-score {
+            font-size: 10px;
+            font-family: var(--mono);
+            width: 28px;
+            text-align: right;
+        }
+
+        .recommendations-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .rec-item {
+            padding: 10px 12px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            border-left: 4px solid;
+        }
+
+        .rec-item.critical {
+            border-left-color: var(--red);
+        }
+
+        .rec-item.high {
+            border-left-color: var(--amber);
+        }
+
+        .rec-item.medium {
+            border-left-color: var(--teal);
+        }
+
+        .rec-priority {
+            font-size: 9px;
+            font-family: var(--mono);
+            font-weight: 700;
+            color: var(--txt2);
+            text-transform: uppercase;
+        }
+
+        .rec-action {
+            font-size: 12px;
+            font-weight: 500;
+            margin-top: 3px;
+        }
+
+        footer {
+            margin-top: 28px;
+            padding-top: 18px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+            color: var(--txt3);
+            font-family: var(--mono);
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .ft-stats {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .ft-stat span:last-child {
+            color: var(--txt);
+        }
+
+        @media (max-width: 1100px) {
+            .grid3 {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 700px) {
+            .grid3 {
+                grid-template-columns: 1fr;
+            }
+
+            .metrics-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
 <div class="app">
 
-<!-- ── HEADER ── -->
-<header>
-  <div class="logo">
-    <div class="logo-icon">TF</div>
-    <div>
-      <div class="logo-name">DeviceHealth AI</div>
-      <div class="logo-sub">Transformer-Based Real-Time Monitor</div>
-    </div>
-  </div>
-  <div class="hdr-right">
-    <div class="device-tabs">
-      <button class="dtab active" id="btnLaptop" onclick="switchDevice('laptop')">💻 Laptop</button>
-      <button class="dtab"        id="btnPhone"  onclick="switchDevice('phone')">📱 Phone</button>
-    </div>
-    <div class="conn-badge disconnected" id="connBadge">
-      <span class="conn-dot"></span><span id="connTxt">CONNECTING...</span>
-    </div>
-    <button class="db-toggle" onclick="toggleDB()">🗄 Database</button>
-  </div>
-</header>
-
-<!-- ── MAIN GRID ── -->
-<div class="grid3">
-
-  <!-- ── LEFT COLUMN ── -->
-  <div style="display:flex;flex-direction:column;gap:18px;">
-
-    <!-- Health Gauge -->
-    <div class="card">
-      <div class="card-title">Health Score</div>
-      <div class="gauge-wrap">
-        <svg class="gauge-svg" viewBox="0 0 190 110">
-          <defs>
-            <linearGradient id="gGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%"   stop-color="#ef4444"/>
-              <stop offset="50%"  stop-color="#f59e0b"/>
-              <stop offset="100%" stop-color="#22c55e"/>
-            </linearGradient>
-          </defs>
-          <path d="M15 100 A80 80 0 0 1 175 100" fill="none" stroke="#1e2d45" stroke-width="12" stroke-linecap="round"/>
-          <path d="M15 100 A80 80 0 0 1 175 100" fill="none" stroke="url(#gGrad)" stroke-width="12" stroke-linecap="round"
-                stroke-dasharray="251.2" id="gaugeFill" style="transition:stroke-dashoffset 1s ease;"/>
-          <circle id="gaugeNeedle" cx="95" cy="100" r="5" fill="#fff"/>
-        </svg>
-        <div class="score-big" id="scoreNum">--</div>
-        <div class="score-lbl">HEALTH INDEX</div>
-        <div class="risk-pill r-low" id="riskPill">● LOADING</div>
-      </div>
-    </div>
-
-    <!-- RUL -->
-    <div class="card">
-      <div class="card-title">Remaining Useful Life</div>
-      <div class="rul-num" id="rulNum">---</div>
-      <div class="rul-unit">days estimated</div>
-      <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--txt3);font-family:var(--mono);margin-top:10px;">
-        <span>DEPLETED</span><span>FULL LIFE</span>
-      </div>
-      <div class="bar-bg"><div class="bar-fill" id="rulBar" style="width:0%;background:var(--teal);"></div></div>
-      <div class="mini-grid">
-        <div class="mini-card"><div class="mini-lbl">CONFIDENCE</div>   <div class="mini-val" id="rulConf" style="color:var(--purple);">--%</div></div>
-        <div class="mini-card"><div class="mini-lbl">DEGRADATION</div>  <div class="mini-val" id="rulDeg"  style="color:var(--amber);">--</div></div>
-      </div>
-    </div>
-
-    <!-- Attention Map -->
-    <div class="card">
-      <div class="card-title">Transformer Attention Map</div>
-      <div style="font-size:10px;color:var(--txt2);margin-bottom:8px;">Multi-head attention feature correlations</div>
-      <div class="attn-grid" id="attnGrid"></div>
-      <div class="attn-lbl" id="attnLbls"></div>
-      <div class="attn-legend">
-        <span>LOW</span>
-        <div class="attn-legend-bar"></div>
-        <span>HIGH</span>
-      </div>
-    </div>
-
-  </div><!-- /left -->
-
-  <!-- ── CENTER COLUMN ── -->
-  <div style="display:flex;flex-direction:column;gap:18px;">
-
-    <!-- Live Metrics -->
-    <div class="card">
-      <div class="sec-hdr">
-        <div class="card-title" style="margin:0;">Real-Time Metrics</div>
-        <div style="font-size:10px;color:var(--txt2);font-family:var(--mono);" id="lastUpdate">--:--:--</div>
-      </div>
-      <div class="metrics-grid" id="metricsGrid"></div>
-    </div>
-
-    <!-- Timeline Chart -->
-    <div class="card">
-      <div class="sec-hdr">
-        <div class="card-title" style="margin:0;">Metric Timeline (30s)</div>
-        <div style="display:flex;gap:14px;font-size:10px;font-family:var(--mono);">
-          <span style="color:#3b82f6;">— CPU</span>
-          <span style="color:#14b8a6;">— TEMP</span>
-          <span style="color:#f59e0b;">— RAM</span>
+    <!-- ── HEADER ── -->
+    <header>
+        <div class="logo">
+            <div class="logo-icon">TF</div>
+            <div>
+                <div class="logo-name">DeviceHealth AI</div>
+                <div class="logo-sub">Transformer-Based Real-Time Monitor</div>
+            </div>
         </div>
-      </div>
-      <div class="chart-wrap"><canvas id="timelineChart"></canvas></div>
-    </div>
+        <div class="hdr-right">
+            <div class="device-tabs">
+                <button class="dtab active" id="btnLaptop" onclick="switchDevice('laptop')">💻 Laptop</button>
+                <button class="dtab" id="btnPhone" onclick="switchDevice('phone')">📱 Phone</button>
+            </div>
+            <div class="conn-badge disconnected" id="connBadge">
+                <span class="conn-dot"></span><span id="connTxt">CONNECTING...</span>
+            </div>
+        </div>
+    </header>
 
-    <!-- Failure Prediction -->
-    <div class="card">
-      <div class="card-title">Early Failure Prediction</div>
-      <div class="failure-list" id="failureList"></div>
-    </div>
+    <!-- ── MAIN GRID ── -->
+    <div class="grid3">
 
-  </div><!-- /center -->
+        <!-- ── LEFT COLUMN ── -->
+        <div style="display:flex;flex-direction:column;gap:18px;">
 
-  <!-- ── RIGHT COLUMN ── -->
-  <div style="display:flex;flex-direction:column;gap:18px;">
+            <!-- Health Gauge -->
+            <div class="card">
+                <div class="card-title">Health Score</div>
+                <div class="gauge-wrap">
+                    <svg class="gauge-svg" viewBox="0 0 190 110">
+                        <defs>
+                            <linearGradient id="gGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" stop-color="#ef4444"/>
+                                <stop offset="50%" stop-color="#f59e0b"/>
+                                <stop offset="100%" stop-color="#22c55e"/>
+                            </linearGradient>
+                        </defs>
+                        <path d="M15 100 A80 80 0 0 1 175 100" fill="none" stroke="#1e2d45" stroke-width="12"
+                              stroke-linecap="round"/>
+                        <path d="M15 100 A80 80 0 0 1 175 100" fill="none" stroke="url(#gGrad)" stroke-width="12"
+                              stroke-linecap="round" stroke-dasharray="251.2" id="gaugeFill"
+                              style="transition:stroke-dashoffset 1s ease;"/>
+                        <circle id="gaugeNeedle" cx="95" cy="100" r="5" fill="#fff"/>
+                    </svg>
+                    <div class="score-big" id="scoreNum">--</div>
+                    <div class="score-lbl">HEALTH INDEX</div>
+                    <div class="risk-pill r-low" id="riskPill">● LOADING</div>
+                </div>
+            </div>
 
-    <!-- Alert Feed -->
-    <div class="card">
-      <div class="sec-hdr">
-        <div class="card-title" style="margin:0;">Alert Feed</div>
-        <button class="clr-btn" onclick="clearAlerts()">[ clear ]</button>
-      </div>
-      <div class="alert-feed" id="alertFeed">
-        <div style="font-size:11px;color:var(--txt3);text-align:center;padding:16px;font-family:var(--mono);">Waiting for data...</div>
-      </div>
-    </div>
+            <!-- RUL -->
+            <div class="card">
+                <div class="card-title">Remaining Useful Life</div>
+                <div class="rul-num" id="rulNum">---</div>
+                <div class="rul-unit">days estimated</div>
+                <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--txt3);font-family:var(--mono);margin-top:10px;">
+                    <span>DEPLETED</span><span>FULL LIFE</span>
+                </div>
+                <div class="bar-bg">
+                    <div class="bar-fill" id="rulBar" style="width:0%;background:var(--teal);"></div>
+                </div>
+                <div class="mini-grid">
+                    <div class="mini-card">
+                        <div class="mini-lbl">CONFIDENCE</div>
+                        <div class="mini-val" id="rulConf" style="color:var(--purple);">--%</div>
+                    </div>
+                    <div class="mini-card">
+                        <div class="mini-lbl">DEGRADATION</div>
+                        <div class="mini-val" id="rulDeg" style="color:var(--amber);">--</div>
+                    </div>
+                </div>
+            </div>
 
-    <!-- Model Info -->
-    <div class="card">
-      <div class="card-title">Transformer Model</div>
-      <div class="model-rows">
-        <div class="model-row"><span class="model-k">ARCHITECTURE</span> <span class="model-v" style="color:var(--purple);">TFT v2</span></div>
-        <div class="model-row"><span class="model-k">ATTENTION HEADS</span><span class="model-v">8</span></div>
-        <div class="model-row"><span class="model-k">SEQ LENGTH</span>    <span class="model-v">128 steps</span></div>
-        <div class="model-row"><span class="model-k">LATENCY</span>       <span class="model-v" style="color:var(--teal);" id="mLatency">-- ms</span></div>
-        <div class="model-row"><span class="model-k">ACCURACY</span>      <span class="model-v" style="color:var(--green);">94.7%</span></div>
-        <div class="model-row"><span class="model-k">LAST INFER</span>    <span class="model-v" id="mLastInfer">--</span></div>
-      </div>
-    </div>
+            <!-- Attention Map -->
+            <div class="card">
+                <div class="card-title">Transformer Attention Map</div>
+                <div style="font-size:10px;color:var(--txt2);margin-bottom:8px;">Multi-head attention feature
+                    correlations
+                </div>
+                <div class="attn-grid" id="attnGrid"></div>
+                <div class="attn-lbl" id="attnLbls"></div>
+                <div class="attn-legend">
+                    <span>LOW</span>
+                    <div class="attn-legend-bar"></div>
+                    <span>HIGH</span>
+                </div>
+            </div>
 
-    <!-- Risk Breakdown -->
-    <div class="card">
-      <div class="card-title">Risk Component Breakdown</div>
-      <div class="rb-rows" id="riskBreakdown"></div>
-    </div>
+        </div><!-- /left -->
 
-  </div><!-- /right -->
-</div><!-- /grid -->
+        <!-- ── CENTER COLUMN ── -->
+        <div style="display:flex;flex-direction:column;gap:18px;">
 
-<!-- ── DATABASE PANEL ── -->
-<div class="db-panel" id="dbPanel">
-  <div style="font-size:13px;font-weight:600;margin-bottom:14px;">Database — Live Stats &amp; API Explorer</div>
-  <div class="db-grid" id="dbStats">
-    <div class="db-stat"><div class="db-stat-lbl">Total Metrics</div>   <div class="db-stat-val" id="dbTotalM">--</div></div>
-    <div class="db-stat"><div class="db-stat-lbl">Health Records</div>  <div class="db-stat-val" id="dbTotalH">--</div></div>
-    <div class="db-stat"><div class="db-stat-lbl">Total Alerts</div>    <div class="db-stat-val" id="dbTotalA" style="color:var(--amber);">--</div></div>
-    <div class="db-stat"><div class="db-stat-lbl">Critical Alerts</div> <div class="db-stat-val" id="dbCritA"  style="color:var(--red);">--</div></div>
-    <div class="db-stat"><div class="db-stat-lbl">Avg Health</div>      <div class="db-stat-val" id="dbAvgH"   style="color:var(--green);">--</div></div>
-    <div class="db-stat"><div class="db-stat-lbl">Min Health</div>      <div class="db-stat-val" id="dbMinH"   style="color:var(--red);">--</div></div>
-    <div class="db-stat"><div class="db-stat-lbl">Max Health</div>      <div class="db-stat-val" id="dbMaxH"   style="color:var(--green);">--</div></div>
-    <div class="db-stat"><div class="db-stat-lbl">DB Samples</div>      <div class="db-stat-val" id="dbSamples">--</div></div>
-  </div>
+            <!-- Live Metrics -->
+            <div class="card">
+                <div class="sec-hdr">
+                    <div class="card-title" style="margin:0;">Real-Time Metrics</div>
+                    <div style="font-size:10px;color:var(--txt2);font-family:var(--mono);" id="lastUpdate">--:--:--</div>
+                </div>
+                <div class="metrics-grid" id="metricsGrid"></div>
+            </div>
 
-  <div style="font-size:11px;color:var(--txt2);font-family:var(--mono);margin-bottom:10px;">API ENDPOINTS — click to call</div>
-  <div class="api-grid">
-    <button class="api-btn" onclick="callApi('GET','/snapshot')">
-      <div class="api-btn-method get">GET</div>
-      <div class="api-btn-path">/snapshot</div>
-      <div class="api-btn-desc">Full metrics snapshot + save to DB</div>
-    </button>
-    <button class="api-btn" onclick="callApi('GET','/health-score')">
-      <div class="api-btn-method get">GET</div>
-      <div class="api-btn-path">/health-score</div>
-      <div class="api-btn-desc">Health score + RUL only</div>
-    </button>
-    <button class="api-btn" onclick="callApi('GET','/db/metrics?limit=10')">
-      <div class="api-btn-method get">GET</div>
-      <div class="api-btn-path">/db/metrics?limit=10</div>
-      <div class="api-btn-desc">Last 10 metric records from DB</div>
-    </button>
-    <button class="api-btn" onclick="callApi('GET','/db/health?limit=10')">
-      <div class="api-btn-method get">GET</div>
-      <div class="api-btn-path">/db/health?limit=10</div>
-      <div class="api-btn-desc">Last 10 health records from DB</div>
-    </button>
-    <button class="api-btn" onclick="callApi('GET','/db/alerts?limit=10')">
-      <div class="api-btn-method get">GET</div>
-      <div class="api-btn-path">/db/alerts?limit=10</div>
-      <div class="api-btn-desc">Last 10 alerts from DB</div>
-    </button>
-    <button class="api-btn" onclick="callApi('GET','/db/alerts?severity=critical')">
-      <div class="api-btn-method get">GET</div>
-      <div class="api-btn-path">/db/alerts?severity=critical</div>
-      <div class="api-btn-desc">Critical alerts only</div>
-    </button>
-    <button class="api-btn" onclick="callApi('GET','/db/stats')">
-      <div class="api-btn-method get">GET</div>
-      <div class="api-btn-path">/db/stats</div>
-      <div class="api-btn-desc">Aggregate DB statistics</div>
-    </button>
-    <button class="api-btn" onclick="callApi('GET','/db/sessions')">
-      <div class="api-btn-method get">GET</div>
-      <div class="api-btn-path">/db/sessions</div>
-      <div class="api-btn-desc">All monitoring sessions</div>
-    </button>
-    <button class="api-btn" onclick="callApi('GET','/status')">
-      <div class="api-btn-method get">GET</div>
-      <div class="api-btn-path">/status</div>
-      <div class="api-btn-desc">Server + DB status</div>
-    </button>
-    <button class="api-btn" onclick="callApi('DELETE','/db/clear')">
-      <div class="api-btn-method del">DELETE</div>
-      <div class="api-btn-path">/db/clear</div>
-      <div class="api-btn-desc">⚠️ Clear all DB records</div>
-    </button>
-  </div>
-  <div class="api-result" id="apiResult"></div>
-</div>
+            <!-- Timeline Chart -->
+            <div class="card">
+                <div class="sec-hdr">
+                    <div class="card-title" style="margin:0;">Metric Timeline (30s)</div>
+                    <div style="display:flex;gap:14px;font-size:10px;font-family:var(--mono);">
+                        <span style="color:#3b82f6;">— CPU</span>
+                        <span style="color:#14b8a6;">— TEMP</span>
+                        <span style="color:#f59e0b;">— RAM</span>
+                    </div>
+                </div>
+                <div class="chart-wrap">
+                    <canvas id="timelineChart"></canvas>
+                </div>
+            </div>
 
-<!-- ── FOOTER ── -->
-<footer>
-  <div>© 2025 Transformer-Based Device Health Monitor</div>
-  <div class="ft-stats">
-    <div class="ft-stat">DEVICE: <span id="ftDevice">LAPTOP</span></div>
-    <div class="ft-stat">UPTIME: <span id="ftUptime">00:00:00</span></div>
-    <div class="ft-stat">SAMPLES: <span id="ftSamples">0</span></div>
-    <div class="ft-stat">WS: <span id="ftWs" style="color:var(--red);">OFF</span></div>
-  </div>
-</footer>
+            <!-- Failure Prediction -->
+            <div class="card">
+                <div class="card-title">Early Failure Prediction</div>
+                <div class="failure-list" id="failureList"></div>
+            </div>
+
+        </div><!-- /center -->
+
+        <!-- ── RIGHT COLUMN ── -->
+        <div style="display:flex;flex-direction:column;gap:18px;">
+
+            <!-- Alert Feed -->
+            <div class="card">
+                <div class="sec-hdr">
+                    <div class="card-title" style="margin:0;">Alert Feed</div>
+                    <button class="clr-btn" onclick="clearAlerts()">[ clear ]</button>
+                </div>
+                <div class="alert-feed" id="alertFeed">
+                    <div style="font-size:11px;color:var(--txt3);text-align:center;padding:16px;font-family:var(--mono);">
+                        Waiting for data...
+                    </div>
+                </div>
+            </div>
+
+            <!-- Smart Recommendations -->
+            <div class="card">
+                <div class="card-title">Smart Recommendations</div>
+                <div class="recommendations-list" id="recsList">
+                    <div
+                        style="font-size:11px;color:var(--txt3);text-align:center;padding:16px;font-family:var(--mono);">
+                        Analyzing...
+                    </div>
+                </div>
+            </div>
+
+            <!-- Model Info -->
+            <div class="card">
+                <div class="card-title">Transformer Model</div>
+                <div class="model-rows">
+                    <div class="model-row">
+                        <span class="model-k">ARCHITECTURE</span>
+                        <span class="model-v" style="color:var(--purple);">TFT v2</span>
+                    </div>
+                    <div class="model-row">
+                        <span class="model-k">ATTENTION HEADS</span>
+                        <span class="model-v">8</span>
+                    </div>
+                    <div class="model-row">
+                        <span class="model-k">SEQ LENGTH</span>
+                        <span class="model-v">128 steps</span>
+                    </div>
+                    <div class="model-row">
+                        <span class="model-k">ACCURACY</span>
+                        <span class="model-v" style="color:var(--green);">94.7%</span>
+                    </div>
+                    <div class="model-row">
+                        <span class="model-k">LAST INFER</span>
+                        <span class="model-v" id="mLastInfer">--</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Risk Breakdown -->
+            <div class="card">
+                <div class="card-title">Risk Component Breakdown</div>
+                <div class="rb-rows" id="riskBreakdown"></div>
+            </div>
+
+        </div><!-- /right -->
+    </div><!-- /grid -->
 
 </div><!-- /app -->
 
+<!-- ── FOOTER ── -->
+<footer>
+    <div>© 2025 Transformer-Based Device Health Monitor</div>
+    <div class="ft-stats">
+        <div class="ft-stat">DEVICE: <span id="ftDevice">LAPTOP</span></div>
+        <div class="ft-stat">UPTIME: <span id="ftUptime">00:00:00</span></div>
+        <div class="ft-stat">SAMPLES: <span id="ftSamples">0</span></div>
+        <div class="ft-stat">WS: <span id="ftWs" style="color:var(--red);">OFF</span></div>
+    </div>
+</footer>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
-/* ── Config ── */
-const API_BASE = 'http://localhost:8000';
-const WS_URL   = 'ws://localhost:8000/ws';
+    /* ── Config ── */
+    const API_BASE = 'http://localhost:8000';
+    const WS_URL = 'ws://localhost:8000/ws';
 
-/* ── State ── */
-let chart       = null;
-let ws          = null;
-let wsRetries   = 0;
-let currentDev  = 'laptop';
-let sampleCount = 0;
-let startTime   = Date.now();
-let alertCount  = 0;
-const MAX_ALERTS = 60;
-const chartBuf  = { cpu:[], temp:[], ram:[] };
-const MAX_PTS   = 30;
+    /* ── State ── */
+    let chart = null;
+    let ws = null;
+    let wsRetries = 0;
+    let currentDev = 'laptop';
+    let sampleCount = 0;
+    let startTime = Date.now();
+    let alertCount = 0;
+    const MAX_ALERTS = 60;
+    const chartBuf = {cpu: [], temp: [], ram: []};
+    const MAX_PTS = 30;
 
-/* ── Metric configs per device ── */
-const METRIC_CFG = {
-  laptop:[
-    {key:'cpu_percent',   label:'CPU',     unit:'%',   max:100},
-    {key:'ram_percent',   label:'RAM',     unit:'%',   max:100},
-    {key:'cpu_temp_c',    label:'CPU Temp',unit:'°C',  max:100},
-    {key:'battery_percent',label:'Battery',unit:'%',  max:100,inv:true},
-    {key:'disk_used_pct', label:'Disk',    unit:'%',   max:100},
-    {key:'swap_percent',  label:'Swap',    unit:'%',   max:100},
-  ],
-  phone:[
-    {key:'cpu_percent',      label:'CPU',     unit:'%',   max:100},
-    {key:'ram_percent',      label:'RAM',     unit:'%',   max:100},
-    {key:'battery_temp_c',   label:'Bat Temp',unit:'°C',  max:60},
-    {key:'battery_percent',  label:'Battery', unit:'%',   max:100,inv:true},
-    {key:'signal_strength',  label:'Signal',  unit:'%',   max:100,inv:true},
-    {key:'storage_used_pct', label:'Storage', unit:'%',   max:100},
-  ]
-};
+    /* ── Metric configs per device ── */
+    const METRIC_CFG = {
+        laptop: [
+            {key: 'cpu_percent', label: 'CPU', unit: '%', max: 100},
+            {key: 'ram_percent', label: 'RAM', unit: '%', max: 100},
+            {key: 'cpu_temp_c', label: 'CPU Temp', unit: '°C', max: 100},
+            {key: 'battery_percent', label: 'Battery', unit: '%', max: 100, inv: true},
+            {key: 'disk_used_pct', label: 'Disk', unit: '%', max: 100},
+            {key: 'swap_percent', label: 'Swap', unit: '%', max: 100},
+        ],
+        phone: [
+            {key: 'cpu_percent', label: 'CPU', unit: '%', max: 100},
+            {key: 'ram_percent', label: 'RAM', unit: '%', max: 100},
+            {key: 'battery_temp_c', label: 'Bat Temp', unit: '°C', max: 60},
+            {key: 'battery_percent', label: 'Battery', unit: '%', max: 100, inv: true},
+            {key: 'signal_strength', label: 'Signal', unit: '%', max: 100, inv: true},
+            {key: 'storage_used_pct', label: 'Storage', unit: '%', max: 100},
+        ]
+    };
 
-const ATTN_LABELS = {
-  laptop:['CPU','RAM','TEMP','BAT','DISK','SWAP'],
-  phone :['CPU','RAM','TEMP','BAT','SIG','STO'],
-};
+    const ATTN_LABELS = {
+        laptop: ['CPU', 'RAM', 'TEMP', 'BAT', 'DISK', 'SWAP'],
+        phone: ['CPU', 'RAM', 'TEMP', 'BAT', 'SIG', 'STO'],
+    };
 
-const RISK_COMPS = ['Battery Health','Thermal Stress','CPU Wear','Storage Integrity','Memory Pressure'];
+    const RISK_COMPS = ['Battery Health', 'Thermal Stress', 'CPU Wear', 'Storage Integrity', 'Memory Pressure'];
 
-/* ── Utility ── */
-const $  = id => document.getElementById(id);
-const now = () => { const d=new Date(); return `${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}:${d.getSeconds().toString().padStart(2,'0')}`; };
-const col = (pct,inv=false)=>{
-  const p = inv ? 1-pct/100 : pct/100;
-  if(p<0.5)  return '#22c55e';
-  if(p<0.75) return '#f59e0b';
-  return '#ef4444';
-};
+    /* ── Utility ── */
+    const $ = id => document.getElementById(id);
+    const now = () => {
+        const d = new Date();
+        return `${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}:${d.getSeconds().toString().padStart(2, '0')}`;
+    };
+    const col = (pct, inv = false) => {
+        const p = inv ? 1 - pct / 100 : pct / 100;
+        if (p < 0.5) return '#22c55e';
+        if (p < 0.75) return '#f59e0b';
+        return '#ef4444';
+    };
 
-/* ── Gauge ── */
-function updateGauge(score){
-  const full=251.2, fill=(score/100)*full;
-  const g=$('gaugeFill');
-  g.style.strokeDasharray=full; g.style.strokeDashoffset=full-fill;
-  const angle=-160+(score/100)*160, rad=angle*Math.PI/180, r=80;
-  const cx=95+r*Math.sin(rad), cy=100-r*Math.cos(rad);
-  $('gaugeNeedle').setAttribute('cx',cx.toFixed(1));
-  $('gaugeNeedle').setAttribute('cy',cy.toFixed(1));
-}
-
-function setRisk(score){
-  const pill=$('riskPill');
-  const map=[
-    [75,'r-low','LOW RISK'],
-    [55,'r-medium','MEDIUM RISK'],
-    [35,'r-high','HIGH RISK'],
-    [0,'r-critical','CRITICAL'],
-  ];
-  for(const [thr,cls,lbl] of map){
-    if(score>=thr){ pill.className='risk-pill '+cls; pill.textContent='● '+lbl; break; }
-  }
-}
-
-/* ── Chart ── */
-function initChart(){
-  if(chart) chart.destroy();
-  const ctx=$('timelineChart').getContext('2d');
-  chartBuf.cpu=[]; chartBuf.temp=[]; chartBuf.ram=[];
-  chart=new Chart(ctx,{
-    type:'line',
-    data:{
-      labels:Array.from({length:MAX_PTS},(_,i)=>`${MAX_PTS-i}s`),
-      datasets:[
-        {label:'CPU',  data:Array(MAX_PTS).fill(0),borderColor:'#3b82f6',borderWidth:1.5,pointRadius:0,tension:.4,fill:false},
-        {label:'Temp', data:Array(MAX_PTS).fill(0),borderColor:'#14b8a6',borderWidth:1.5,pointRadius:0,tension:.4,fill:false},
-        {label:'RAM',  data:Array(MAX_PTS).fill(0),borderColor:'#f59e0b',borderWidth:1.5,pointRadius:0,tension:.4,fill:false},
-      ]
-    },
-    options:{
-      responsive:true,maintainAspectRatio:false,animation:false,
-      plugins:{legend:{display:false}},
-      scales:{
-        x:{display:false},
-        y:{min:0,max:100,grid:{color:'#1e2d45'},ticks:{color:'#3a4f70',font:{size:9},maxTicksLimit:5}}
-      }
+    /* ── Gauge ── */
+    function updateGauge(score) {
+        const full = 251.2, fill = (score / 100) * full;
+        const g = $('gaugeFill');
+        g.style.strokeDasharray = full;
+        g.style.strokeDashoffset = full - fill;
+        const angle = -160 + (score / 100) * 160, rad = angle * Math.PI / 180, r = 80;
+        const cx = 95 + r * Math.sin(rad), cy = 100 - r * Math.cos(rad);
+        $('gaugeNeedle').setAttribute('cx', cx.toFixed(1));
+        $('gaugeNeedle').setAttribute('cy', cy.toFixed(1));
     }
-  });
-}
 
-function pushChart(cpu,temp,ram){
-  [['cpu',cpu],['temp',temp],['ram',ram]].forEach(([k,v])=>{
-    chartBuf[k].push(Math.round(v));
-    if(chartBuf[k].length>MAX_PTS) chartBuf[k].shift();
-  });
-  chart.data.datasets[0].data=[...chartBuf.cpu];
-  chart.data.datasets[1].data=[...chartBuf.temp];
-  chart.data.datasets[2].data=[...chartBuf.ram];
-  chart.update('none');
-}
+    function setRisk(score) {
+        const pill = $('riskPill');
+        const map = [
+            [75, 'r-low', 'LOW RISK'],
+            [55, 'r-medium', 'MEDIUM RISK'],
+            [35, 'r-high', 'HIGH RISK'],
+            [0, 'r-critical', 'CRITICAL'],
+        ];
+        for (const [thr, cls, lbl] of map) {
+            if (score >= thr) {
+                pill.className = 'risk-pill ' + cls;
+                pill.textContent = '● ' + lbl;
+                break;
+            }
+        }
+    }
 
-/* ── Metrics Grid ── */
-function renderMetrics(metrics){
-  const grid=$('metricsGrid'); grid.innerHTML='';
-  METRIC_CFG[currentDev].forEach(m=>{
-    const val=metrics[m.key]??0;
-    const pct=Math.min(100,(val/m.max)*100);
-    const c=col(pct,m.inv||false);
-    const trend=Math.random()>.5?'▲':'▼';
-    const tCls=trend==='▲'&&!m.inv?'t-up':'t-dn';
-    const chg=(Math.random()*2.5).toFixed(1);
-    grid.innerHTML+=`
-      <div class="m-card">
-        <div class="m-name">${m.label}</div>
-        <div class="m-val" style="color:${c}">${typeof val==='number'?val.toFixed(1):val}<span class="m-unit"> ${m.unit}</span></div>
-        <div class="m-bar-bg"><div class="m-bar-fill" style="width:${pct}%;background:${c};"></div></div>
-        <div class="m-trend ${tCls}">${trend} ${chg}${m.unit}/s</div>
-      </div>`;
-  });
-}
+    /* ── Chart ── */
+    function initChart() {
+        if (chart) chart.destroy();
+        const ctx = $('timelineChart').getContext('2d');
+        chartBuf.cpu = [];
+        chartBuf.temp = [];
+        chartBuf.ram = [];
+        chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: Array.from({length: MAX_PTS}, (_, i) => `${MAX_PTS - i}s`),
+                datasets: [
+                    {
+                        label: 'CPU',
+                        data: Array(MAX_PTS).fill(0),
+                        borderColor: '#3b82f6',
+                        borderWidth: 1.5,
+                        pointRadius: 0,
+                        tension: 0.4,
+                        fill: false
+                    },
+                    {
+                        label: 'Temp',
+                        data: Array(MAX_PTS).fill(0),
+                        borderColor: '#14b8a6',
+                        borderWidth: 1.5,
+                        pointRadius: 0,
+                        tension: 0.4,
+                        fill: false
+                    },
+                    {
+                        label: 'RAM',
+                        data: Array(MAX_PTS).fill(0),
+                        borderColor: '#f59e0b',
+                        borderWidth: 1.5,
+                        pointRadius: 0,
+                        tension: 0.4,
+                        fill: false
+                    },
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: false,
+                plugins: {legend: {display: false}},
+                scales: {
+                    x: {display: false},
+                    y: {min: 0, max: 100, grid: {color: '#1e2d45'}, ticks: {color: '#3a4f70', font: {size: 9}, maxTicksLimit: 5}}
+                }
+            }
+        });
+    }
 
-/* ── Attention Map ── */
-function renderAttn(metrics){
-  const grid=$('attnGrid');
-  const lbls=$('attnLbls');
-  const keys=METRIC_CFG[currentDev].map(m=>m.key);
-  const labels=ATTN_LABELS[currentDev];
+    function pushChart(cpu, temp, ram) {
+        [['cpu', cpu], ['temp', temp], ['ram', ram]].forEach(([k, v]) => {
+            chartBuf[k].push(Math.round(v));
+            if (chartBuf[k].length > MAX_PTS) chartBuf[k].shift();
+        });
+        chart.data.datasets[0].data = [...chartBuf.cpu];
+        chart.data.datasets[1].data = [...chartBuf.temp];
+        chart.data.datasets[2].data = [...chartBuf.ram];
+        chart.update('none');
+    }
 
-  if(grid.children.length!==36){
-    grid.innerHTML='';
-    for(let i=0;i<36;i++){const c=document.createElement('div');c.className='attn-cell';grid.appendChild(c);}
-    lbls.innerHTML=labels.map(l=>`<span>${l}</span>`).join('');
-  }
-  const weights=keys.map(k=>Math.min(1,(metrics[k]??50)/100));
-  const cells=grid.children;
-  for(let r=0;r<6;r++) for(let c=0;c<6;c++){
-    const a=Math.min(1,weights[r]*weights[c]+Math.random()*.12);
-    const ri=Math.round(17+a*(59-17)), gi=Math.round(29+a*(130-29)), bi=Math.round(69+a*(246-69));
-    cells[r*6+c].style.background=`rgb(${ri},${gi},${bi})`;
-  }
-}
+    /* ── Metrics Grid ── */
+    function renderMetrics(metrics) {
+        const grid = $('metricsGrid');
+        grid.innerHTML = '';
+        METRIC_CFG[currentDev].forEach(m => {
+            const val = metrics[m.key] ?? 0;
+            const pct = Math.min(100, (val / m.max) * 100);
+            const c = col(pct, m.inv || false);
+            const trend = Math.random() > 0.5 ? '▲' : '▼';
+            const tCls = trend === '▲' && !m.inv ? 't-up' : 't-dn';
+            const chg = (Math.random() * 2.5).toFixed(1);
+            grid.innerHTML += `
+                <div class="m-card">
+                    <div class="m-name">${m.label}</div>
+                    <div class="m-val" style="color:${c}">${typeof val === 'number' ? val.toFixed(1) : val}<span class="m-unit"> ${m.unit}</span></div>
+                    <div class="m-bar-bg"><div class="m-bar-fill" style="width:${pct}%;background:${c};"></div></div>
+                    <div class="m-trend ${tCls}">${trend} ${chg}${m.unit}/s</div>
+                </div>`;
+        });
+    }
 
-/* ── Failure Prediction ── */
-function renderFailures(failureProbs){
-  const list=$('failureList'); list.innerHTML='';
-  Object.entries(failureProbs).forEach(([name,prob])=>{
-    const pct=Math.round(prob*100);
-    const c=pct>50?'#ef4444':pct>25?'#f59e0b':'#22c55e';
-    list.innerHTML+=`
-      <div class="f-item" style="border-left-color:${c};">
-        <div>
-          <div class="f-name">${name.replace(/_/g,' ').replace(/\b\w/g,s=>s.toUpperCase())}</div>
-          <div class="f-sub">7-day window probability</div>
-        </div>
-        <div class="f-prob" style="color:${c}">${pct}%</div>
-      </div>`;
-  });
-}
+    /* ── Attention Map ── */
+    function renderAttn(metrics) {
+        const grid = $('attnGrid');
+        const lbls = $('attnLbls');
+        const keys = METRIC_CFG[currentDev].map(m => m.key);
+        const labels = ATTN_LABELS[currentDev];
 
-/* ── Risk Breakdown ── */
-function renderRisk(componentScores){
-  const rb=$('riskBreakdown'); rb.innerHTML='';
-  const labels=RISK_COMPS;
-  const vals=Object.values(componentScores);
-  labels.forEach((name,i)=>{
-    const score=vals[i]??Math.round(40+Math.random()*50);
-    const c=score>70?'#22c55e':score>45?'#f59e0b':'#ef4444';
-    rb.innerHTML+=`
-      <div class="rb-row">
-        <div class="rb-lbl">${name.toUpperCase().slice(0,12)}</div>
-        <div class="rb-bar-bg"><div class="rb-bar-fill" style="width:${score}%;background:${c};"></div></div>
-        <div class="rb-score" style="color:${c};">${score}</div>
-      </div>`;
-  });
-}
+        if (grid.children.length !== 36) {
+            grid.innerHTML = '';
+            for (let i = 0; i < 36; i++) {
+                const c = document.createElement('div');
+                c.className = 'attn-cell';
+                grid.appendChild(c);
+            }
+            lbls.innerHTML = labels.map(l => `<span>${l}</span>`).join('');
+        }
+        const weights = keys.map(k => Math.min(1, (metrics[k] ?? 50) / 100));
+        const cells = grid.children;
+        for (let r = 0; r < 6; r++) {
+            for (let c = 0; c < 6; c++) {
+                const a = Math.min(1, weights[r] * weights[c] + Math.random() * 0.12);
+                const ri = Math.round(17 + a * (59 - 17)), gi = Math.round(29 + a * (130 - 29)), bi = Math.round(69 + a * (246 - 69));
+                cells[r * 6 + c].style.background = `rgb(${ri},${gi},${bi})`;
+            }
+        }
+    }
 
-/* ── Alerts ── */
-function pushAlert(severity,msg){
-  const feed=$('alertFeed');
-  if(feed.children.length===1&&feed.children[0].style.textAlign) feed.innerHTML='';
-  if(alertCount>=MAX_ALERTS) feed.removeChild(feed.lastChild);
-  const cls={warning:'a-warn',critical:'a-crit',info:'a-info',ok:'a-ok'}[severity]||'a-info';
-  const el=document.createElement('div');
-  el.className=`a-item ${cls}`;
-  el.innerHTML=`<div class="a-msg">${msg}</div><div class="a-time">${now()}</div>`;
-  feed.insertBefore(el,feed.firstChild);
-  alertCount++;
-}
+    /* ── Failure Prediction ── */
+    function renderFailures(failureProbs) {
+        const list = $('failureList');
+        list.innerHTML = '';
+        Object.entries(failureProbs).forEach(([name, prob]) => {
+            const pct = Math.round(prob * 100);
+            const c = pct > 50 ? '#ef4444' : pct > 25 ? '#f59e0b' : '#22c55e';
+            list.innerHTML += `
+                <div class="f-item" style="border-left-color:${c};">
+                    <div>
+                        <div class="f-name">${name.replace(/_/g, ' ').replace(/\b\w/g, s => s.toUpperCase())}</div>
+                        <div class="f-sub">7-day window probability</div>
+                    </div>
+                    <div class="f-prob" style="color:${c}">${pct}%</div>
+                </div>`;
+        });
+    }
 
-function clearAlerts(){
-  $('alertFeed').innerHTML='<div style="font-size:11px;color:var(--txt3);text-align:center;padding:16px;font-family:var(--mono);">Feed cleared.</div>';
-  alertCount=0;
-}
+    /* ── Risk Breakdown ── */
+    function renderRisk(componentScores) {
+        const rb = $('riskBreakdown');
+        rb.innerHTML = '';
+        const labels = RISK_COMPS;
+        const vals = Object.values(componentScores);
+        labels.forEach((name, i) => {
+            const score = vals[i] ?? Math.round(40 + Math.random() * 50);
+            const c = score > 70 ? '#22c55e' : score > 45 ? '#f59e0b' : '#ef4444';
+            rb.innerHTML += `
+                <div class="rb-row">
+                    <div class="rb-lbl">${name.toUpperCase().slice(0, 12)}</div>
+                    <div class="rb-bar-bg"><div class="rb-bar-fill" style="width:${score}%;background:${c};"></div></div>
+                    <div class="rb-score" style="color:${c};">${score}</div>
+                </div>`;
+        });
+    }
 
-/* ── Update full UI from snapshot ── */
-function applySnapshot(data){
-  sampleCount++;
-  const {metrics,health,new_alerts}=data;
+    /* ── Recommendations ── */
+    function renderRecommendations(recs) {
+        const list = $('recsList');
+        list.innerHTML = '';
+        if (!recs || recs.length === 0) {
+            list.innerHTML = '<div style="font-size:11px;color:var(--txt3);text-align:center;padding:16px;font-family:var(--mono);">All systems optimal</div>';
+            return;
+        }
+        recs.forEach(r => {
+            const cls = r.priority.toLowerCase();
+            list.innerHTML += `
+                <div class="rec-item ${cls}">
+                    <div class="rec-priority">${r.priority}</div>
+                    <div class="rec-action">${r.action.replace(/_/g, ' ')}</div>
+                    <div style="font-size:10px;color:var(--txt2);margin-top:2px;">${r.message || r.component}</div>
+                </div>`;
+        });
+    }
 
-  // Gauge + score
-  $('scoreNum').textContent=health.health_score;
-  updateGauge(health.health_score);
-  setRisk(health.health_score);
+    /* ── Alerts ── */
+    function pushAlert(severity, msg) {
+        const feed = $('alertFeed');
+        if (feed.children.length === 1 && feed.children[0].style.textAlign) feed.innerHTML = '';
+        if (alertCount >= MAX_ALERTS) feed.removeChild(feed.lastChild);
+        const cls = {warning: 'a-warn', critical: 'a-crit', info: 'a-info', ok: 'a-ok'}[severity] || 'a-info';
+        const el = document.createElement('div');
+        el.className = `a-item ${cls}`;
+        el.innerHTML = `<div class="a-msg">${msg}</div><div class="a-time">${now()}</div>`;
+        feed.insertBefore(el, feed.firstChild);
+        alertCount++;
+    }
 
-  // RUL
-  $('rulNum').textContent=health.rul_days;
-  const rp=Math.min(100,Math.round(health.rul_days/730*100));
-  const rb=$('rulBar');
-  rb.style.width=rp+'%';
-  rb.style.background=rp>50?'#14b8a6':rp>25?'#f59e0b':'#ef4444';
-  $('rulConf').textContent=Math.round(88+Math.random()*9)+'%';
-  $('rulDeg').textContent=health.degradation_rate.toFixed(3)+'/step';
+    function clearAlerts() {
+        $('alertFeed').innerHTML = '<div style="font-size:11px;color:var(--txt3);text-align:center;padding:16px;font-family:var(--mono);">Feed cleared.</div>';
+        alertCount = 0;
+    }
 
-  // Metrics
-  renderMetrics(metrics);
-  $('lastUpdate').textContent=now();
+    /* ── Update full UI from snapshot ── */
+    function applySnapshot(data) {
+        sampleCount++;
+        const {metrics, health, new_alerts, recommendations} = data;
 
-  // Chart
-  const temp=metrics.cpu_temp_c||metrics.battery_temp_c||50;
-  pushChart(metrics.cpu_percent||0, temp, metrics.ram_percent||0);
+        // Gauge + score
+        $('scoreNum').textContent = health.health_score;
+        updateGauge(health.health_score);
+        setRisk(health.health_score);
 
-  // Attention
-  renderAttn(metrics);
+        // RUL
+        $('rulNum').textContent = health.rul_days;
+        const rp = Math.min(100, Math.round(health.rul_days / 730 * 100));
+        const rb = $('rulBar');
+        rb.style.width = rp + '%';
+        rb.style.background = rp > 50 ? '#14b8a6' : rp > 25 ? '#f59e0b' : '#ef4444';
+        $('rulConf').textContent = health.confidence_score + '%';
+        $('rulDeg').textContent = health.degradation_rate.toFixed(3) + '/step';
 
-  // Failures
-  renderFailures(health.failure_probs);
+        // Metrics
+        renderMetrics(metrics);
+        $('lastUpdate').textContent = now();
 
-  // Risk breakdown
-  renderRisk(health.component_scores);
+        // Chart
+        const temp = metrics.cpu_temp_c || metrics.battery_temp_c || 50;
+        pushChart(metrics.cpu_percent || 0, temp, metrics.ram_percent || 0);
 
-  // Alerts
-  if(new_alerts&&new_alerts.length){
-    new_alerts.forEach(a=>pushAlert(a.severity,a.message));
-  }
+        // Attention
+        renderAttn(metrics);
 
-  // Model panel
-  $('mLatency').textContent=Math.round(8+Math.random()*14)+' ms';
-  $('mLastInfer').textContent=now();
+        // Failures
+        renderFailures(health.failure_probs);
 
-  // Footer
-  $('ftSamples').textContent=sampleCount;
-  const up=Math.floor((Date.now()-startTime)/1000);
-  const h=String(Math.floor(up/3600)).padStart(2,'0');
-  const m=String(Math.floor(up%3600/60)).padStart(2,'0');
-  const s=String(up%60).padStart(2,'0');
-  $('ftUptime').textContent=`${h}:${m}:${s}`;
-}
+        // Risk breakdown
+        renderRisk(health.component_scores);
 
-/* ── WebSocket ── */
-function connectWS(){
-  ws=new WebSocket(WS_URL);
+        // Recommendations
+        renderRecommendations(recommendations);
 
-  ws.onopen=()=>{
-    wsRetries=0;
-    $('connBadge').className='conn-badge connected';
-    $('connTxt').textContent='LIVE';
-    $('ftWs').textContent='ON'; $('ftWs').style.color='var(--green)';
-    pushAlert('ok','WebSocket connected — live stream started');
-  };
+        // Alerts
+        if (new_alerts && new_alerts.length) {
+            new_alerts.forEach(a => pushAlert(a.severity, a.message));
+        }
 
-  ws.onmessage=e=>{
-    try{ applySnapshot(JSON.parse(e.data)); }catch(err){console.error(err);}
-  };
+        // Model panel
+        $('mLastInfer').textContent = now();
 
-  ws.onclose=()=>{
-    $('connBadge').className='conn-badge disconnected';
-    $('connTxt').textContent='RECONNECTING...';
-    $('ftWs').textContent='OFF'; $('ftWs').style.color='var(--red)';
-    const delay=Math.min(8000,1000*Math.pow(2,wsRetries++));
-    setTimeout(connectWS,delay);
-  };
+        // Footer
+        $('ftSamples').textContent = sampleCount;
+        const up = Math.floor((Date.now() - startTime) / 1000);
+        const h = String(Math.floor(up / 3600)).padStart(2, '0');
+        const m = String(Math.floor(up % 3600 / 60)).padStart(2, '0');
+        const s = String(up % 60).padStart(2, '0');
+        $('ftUptime').textContent = `${h}:${m}:${s}`;
+    }
 
-  ws.onerror=()=>ws.close();
-}
+    /* ── WebSocket ── */
+    function connectWS() {
+        ws = new WebSocket(WS_URL);
 
-/* ── Device Switch ── */
-async function switchDevice(dev){
-  currentDev=dev;
-  $('btnLaptop').classList.toggle('active',dev==='laptop');
-  $('btnPhone').classList.toggle('active',dev==='phone');
-  $('ftDevice').textContent=dev.toUpperCase();
-  $('attnGrid').innerHTML='';  // reset attention map
-  try{
-    await fetch(`${API_BASE}/device/${dev}`,{method:'POST'});
-    pushAlert('info',`Switched to ${dev} monitoring`);
-  }catch(e){
-    pushAlert('warning',`Could not reach backend — using fallback mode`);
-  }
-  initChart();
-}
+        ws.onopen = () => {
+            wsRetries = 0;
+            $('connBadge').className = 'conn-badge connected';
+            $('connTxt').textContent = 'LIVE';
+            $('ftWs').textContent = 'ON';
+            $('ftWs').style.color = 'var(--green)';
+            pushAlert('ok', 'WebSocket connected — live stream started');
+        };
 
-/* ── DB Panel ── */
-function toggleDB(){
-  const p=$('dbPanel');
-  p.classList.toggle('open');
-  if(p.classList.contains('open')) fetchDBStats();
-}
+        ws.onmessage = e => {
+            try {
+                applySnapshot(JSON.parse(e.data));
+            } catch (err) {
+                console.error(err);
+            }
+        };
 
-async function fetchDBStats(){
-  try{
-    const r=await fetch(`${API_BASE}/db/stats`);
-    const d=await r.json();
-    $('dbTotalM').textContent=d.total_metric_records??'--';
-    $('dbTotalH').textContent=d.total_health_records??'--';
-    $('dbTotalA').textContent=d.total_alerts??'--';
-    $('dbCritA').textContent=d.critical_alerts??'--';
-    $('dbAvgH').textContent=d.avg_health_score??'--';
-    $('dbMinH').textContent=d.min_health_score??'--';
-    $('dbMaxH').textContent=d.max_health_score??'--';
-    const st=await fetch(`${API_BASE}/status`);
-    const sd=await st.json();
-    $('dbSamples').textContent=sd.db_records??'--';
-  }catch(e){
-    $('dbTotalM').textContent='N/A';
-  }
-}
+        ws.onclose = () => {
+            $('connBadge').className = 'conn-badge disconnected';
+            $('connTxt').textContent = 'RECONNECTING...';
+            $('ftWs').textContent = 'OFF';
+            $('ftWs').style.color = 'var(--red)';
+            const delay = Math.min(8000, 1000 * Math.pow(2, wsRetries++));
+            setTimeout(connectWS, delay);
+        };
 
-async function callApi(method,path){
-  const res=$('apiResult');
-  res.textContent='Loading...'; res.classList.add('visible');
-  try{
-    const r=await fetch(API_BASE+path,{method});
-    const d=await r.json();
-    res.textContent=JSON.stringify(d,null,2);
-    if(path.includes('stats')) fetchDBStats();
-  }catch(e){
-    res.textContent='Error: backend not reachable at '+API_BASE;
-  }
-}
+        ws.onerror = () => ws.close();
+    }
 
-/* ── Init ── */
-document.addEventListener('DOMContentLoaded',()=>{
-  initChart();
-  connectWS();
-  pushAlert('info','Dashboard loaded — connecting to backend...');
-  // Refresh DB stats every 30 s if panel is open
-  setInterval(()=>{ if($('dbPanel').classList.contains('open')) fetchDBStats(); },30000);
-});
+    /* ── Device Switch ── */
+    async function switchDevice(dev) {
+        currentDev = dev;
+        $('btnLaptop').classList.toggle('active', dev === 'laptop');
+        $('btnPhone').classList.toggle('active', dev === 'phone');
+        $('ftDevice').textContent = dev.toUpperCase();
+        $('attnGrid').innerHTML = '';
+        try {
+            await fetch(`${API_BASE}/device/${dev}`, {method: 'POST'});
+            pushAlert('info', `Switched to ${dev} monitoring`);
+        } catch (e) {
+            pushAlert('warning', `Could not reach backend — using fallback mode`);
+        }
+        initChart();
+    }
+
+    /* ── Init ── */
+    document.addEventListener('DOMContentLoaded', () => {
+        initChart();
+        connectWS();
+        pushAlert('info', 'Dashboard loaded — connecting to backend...');
+    });
 </script>
 </body>
 </html>
